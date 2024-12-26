@@ -29,7 +29,7 @@ def message(msg,x,y): #Функция для вывода сообщений н�
 def our_snake(snake_block, snake_list): #Функция для отрисовки змея окоянного
    for x in snake_list:
         if x==snake_list[len(snake_list)-1]: #Окрашиваю голову змея в белый
-            pygame.draw.rect(dis, white, [x[0], x[1], snake_block, snake_block])
+            pygame.draw.rect(dis, white, [x[0], x[1], snake_block+2, snake_block+2])
         else: #Окрашиваю хвост змея в серый
             pygame.draw.rect(dis, grey, [x[0], x[1], snake_block, snake_block])
 
