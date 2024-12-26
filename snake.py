@@ -8,6 +8,7 @@ black = (0, 0, 0)
 red = (255, 0, 0)
 grey = (100,100,100)
 green = (0,100,0)
+purple = (155,0,155)
 
 dis_x = 1280 #Размер игрового поля по оси x
 dis_y = 720 #Размер игрового поля по оси y
@@ -17,6 +18,13 @@ snake_block=10 #Размер блока змея окоянного
 snake_speed=15 #Скорость змея окоянного
 font_style = pygame.font.SysFont("bahnschrift", 50, False, True) #Задаём стиль текста(Шрифт, размер, Жирный?, Курсив?)
 clock = pygame.time.Clock() #Переменная отвечающая за подсчёт времени
+
+def returnMatches(a, b):
+    matches = []
+    for i in a:
+        if i in b:
+            matches.append(i)
+    return matches
 
 def score(score): #Функция подсчёта и вывода счёта(длина змея - начальная длина змея)
    value = font_style.render("Ваш счёт: " + str(score-2), True, black, grey)
@@ -29,7 +37,7 @@ def message(msg,x,y): #Функция для вывода сообщений н�
 def our_snake(snake_block, snake_list): #Функция для отрисовки змея окоянного
    for x in snake_list:
         if x==snake_list[len(snake_list)-1]: #Окрашиваю голову змея в белый
-            pygame.draw.rect(dis, white, [x[0], x[1], snake_block+2, snake_block+2])
+            pygame.draw.rect(dis, white, [x[0]-1, x[1]-1, snake_block+2, snake_block+2])
         else: #Окрашиваю хвост змея в серый
             pygame.draw.rect(dis, grey, [x[0], x[1], snake_block, snake_block])
 
@@ -46,6 +54,9 @@ def game(): #Функция игры
     snake_len = 2 #Длина змея окоянного
     stop=True #Флаг, означающий что змей стоит
     previous_key = '' #Переменная содержащая последнюю нажатую клавишу действия
+    move_accept = False
+    portal_xy = [dis_x/2,dis_y/2]
+    dot_portal = False
 
 
     while not game_end: #Основной цикл
@@ -67,56 +78,50 @@ def game(): #Функция игры
                     snake_list = []
                     stop=True
                     previous_key = ''
+                    move_accept = False
+                    dot_portal=False
+                    portal_xy = [dis_x/2,dis_y/2]
                 if (defeat==False): #Проверка на то, что игра не проиграна
                     if (snake_head[0]%10 != 0): #Если голова змея находится не в системе координат игры из-за движения наискосок, мы её возвращаем
                             x1+=snake_block/2
                             y1+=snake_block/2
                             stop=True
-                    if event.key == pygame.K_a and previous_key != 'd': #влево
+                    if event.key == pygame.K_a and previous_key != 'd' and move_accept == False: #влево
+                        move_accept = True
                         previous_key = 'a'
                         stop=False
                         x1_change = -snake_block
                         y1_change = 0
-                    elif event.key == pygame.K_d and previous_key != 'a': #вправо
+                    elif event.key == pygame.K_d and previous_key != 'a' and move_accept == False: #вправо
+                        move_accept = True
                         previous_key = 'd'
                         stop=False
                         x1_change = snake_block
                         y1_change = 0
-                    elif event.key == pygame.K_w and previous_key != 's': #вверх
+                    elif event.key == pygame.K_w and previous_key != 's' and move_accept == False: #вверх
+                        move_accept = True
                         previous_key = 'w'
                         stop=False
                         y1_change = -snake_block
                         x1_change = 0
-                    elif event.key == pygame.K_s and previous_key != 'w': #вниз
+                    elif event.key == pygame.K_s and previous_key != 'w' and move_accept == False: #вниз
+                        move_accept = True
                         previous_key = 's'
                         stop=False
                         y1_change = snake_block
                         x1_change = 0
-                    elif event.key == pygame.K_e and previous_key != 'z': #вверх-направо
-                        previous_key = 'e'
-                        stop=False
-                        y1_change = -snake_block/2
-                        x1_change = snake_block/2
-                    elif event.key == pygame.K_q and previous_key != 'c': #вверх-налево
-                        previous_key = 'q'
-                        stop=False
-                        y1_change = -snake_block/2
-                        x1_change = -snake_block/2
-                    elif event.key == pygame.K_c and previous_key != 'q': #вниз-направо
-                        previous_key = 'c'
-                        stop=False
-                        y1_change = snake_block/2
-                        x1_change = snake_block/2
-                    elif event.key == pygame.K_z and previous_key != 'e': #вниз-налево
-                        previous_key = 'z'
-                        stop=False
-                        y1_change = snake_block/2
-                        x1_change = -snake_block/2
                     elif event.key == pygame.K_x: #стоп
                         previous_key = ''
                         stop=True
                         y1_change = 0
                         x1_change = 0
+                    elif event.key == pygame.K_f and dot_portal == False: #Телепорт в начало
+                        rar = 0
+                        portal_xy = [x1,y1]
+                        dot_portal = True
+                        stop=False
+                        x1=dis_x/2
+                        y1=dis_y/2
         if (x1 >= dis_x-snake_block) or (x1 < 0+snake_block) or (y1 >= dis_y-snake_block) or (y1 < 0+snake_block + 50):
             defeat=True  #Поражение, если координаты головы змея окоянного выходят за границы поля
         if (defeat==False): 
@@ -135,9 +140,16 @@ def game(): #Функция игры
             for x in snake_list[:-1]:
                 if x == snake_head:
                     defeat = True #поражение при столкновении
+        if dot_portal == True:
+            pygame.draw.rect(dis, purple, [portal_xy[0]-3, portal_xy[1]-3, snake_block+6, snake_block+6])
+            pygame.draw.rect(dis, purple, [dis_x/2-3, dis_y/2-3, snake_block+6, snake_block+6])
+            rar+=1
+            if  rar == snake_len:
+                dot_portal = False
         our_snake(snake_block, snake_list) #Отрисовываем змея окоянного
         score(snake_len) #Выводим счёт
         pygame.display.update() #обновляем экран игрока
+        move_accept = False
         if x1 == foodx and y1 == foody: #Собираем еду, если голова змея на клетке еды
             foodx = round(random.randrange(0 + snake_block*2, dis_x - snake_block*2) / 10.0) * 10.0 #Создаём переменную, которая будет указывать расположение еды по оси х
             foody = round(random.randrange(0 + snake_block*2 + 50, dis_y - snake_block*2) / 10.0) * 10.0 #Создаём переменную, которая будет указывать расположение еды по оси y
@@ -158,7 +170,7 @@ def start_game(): #Функия для вывода обучения, и пос�
         message(msg,0,0)
         msg = "wasd-движение"
         message(msg,0,50)
-        msg = "qezc-движение наискосок "
+        msg = "f-телепортироваться в середину карты"
         message(msg,0,100)
         msg = "x-остановиться"
         message(msg,0,150)
