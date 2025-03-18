@@ -1,6 +1,6 @@
 import pygame
 import random
- 
+
 pygame.init()
 
 white = (255, 255, 255) #Цвета по RGB
@@ -57,13 +57,22 @@ def game(): #Функция игры
     move_accept = False
     portal_xy = [dis_x/2,dis_y/2]
     dot_portal = False
-
+    xt = dis_x/2
+    yt = dis_y/2
 
     while not game_end: #Основной цикл
         for event in pygame.event.get(): #Цикл взаимодействия игрока с игрой
             print(event) #Вывод действия игрока на консоль
             if (event.type==pygame.QUIT): #Выход через закрытие окна
                 game_end=True
+
+            if (event.type == pygame.MOUSEMOTION):
+                xtemp, ytemp = event.pos
+                print(xtemp,ytemp)
+            if (dot_portal == False):
+                    xt=(xtemp//10)*10
+                    yt=(ytemp//10)*10
+
             if (event.type == pygame.KEYDOWN): #Выбираем из взаимодействий игрока только нажатия клавиш.
                 if event.key==pygame.K_ESCAPE: #Завершение игры через Escape.
                     game_end=True
@@ -116,12 +125,12 @@ def game(): #Функция игры
                         y1_change = 0
                         x1_change = 0
                     elif event.key == pygame.K_f and dot_portal == False: #Телепорт в начало
-                        rar = 0
+                        portal_time = 0
                         portal_xy = [x1,y1]
                         dot_portal = True
                         stop=False
-                        x1=dis_x/2
-                        y1=dis_y/2
+                        x1=xt
+                        y1=yt
         if (x1 >= dis_x-snake_block) or (x1 < 0+snake_block) or (y1 >= dis_y-snake_block) or (y1 < 0+snake_block + 50):
             defeat=True  #Поражение, если координаты головы змея окоянного выходят за границы поля
         if (defeat==False): 
@@ -142,9 +151,9 @@ def game(): #Функция игры
                     defeat = True #поражение при столкновении
         if dot_portal == True:
             pygame.draw.rect(dis, purple, [portal_xy[0]-3, portal_xy[1]-3, snake_block+6, snake_block+6])
-            pygame.draw.rect(dis, purple, [dis_x/2-3, dis_y/2-3, snake_block+6, snake_block+6])
-            rar+=1
-            if  rar == snake_len:
+            pygame.draw.rect(dis, purple, [xt-3, yt-3, snake_block+6, snake_block+6])
+            portal_time +=1
+            if  portal_time == snake_len:
                 dot_portal = False
         our_snake(snake_block, snake_list) #Отрисовываем змея окоянного
         score(snake_len) #Выводим счёт
@@ -153,7 +162,7 @@ def game(): #Функция игры
         if x1 == foodx and y1 == foody: #Собираем еду, если голова змея на клетке еды
             foodx = round(random.randrange(0 + snake_block*2, dis_x - snake_block*2) / 10.0) * 10.0 #Создаём переменную, которая будет указывать расположение еды по оси х
             foody = round(random.randrange(0 + snake_block*2 + 50, dis_y - snake_block*2) / 10.0) * 10.0 #Создаём переменную, которая будет указывать расположение еды по оси y
-            snake_len += 1 #Добавляем длину змею
+            snake_len += 3 #Добавляем длину змею
         clock.tick(snake_speed) #Перемещаем время игры через snake_speed (кадров?)
 
 
