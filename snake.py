@@ -59,6 +59,9 @@ def game(): #Функция игры
     dot_portal = False
     xt = dis_x/2
     yt = dis_y/2
+    xtemp = 0
+    ytemp = 0
+
 
     while not game_end: #Основной цикл
         for event in pygame.event.get(): #Цикл взаимодействия игрока с игрой
@@ -69,9 +72,6 @@ def game(): #Функция игры
             if (event.type == pygame.MOUSEMOTION):
                 xtemp, ytemp = event.pos
                 print(xtemp,ytemp)
-            if (dot_portal == False):
-                    xt=(xtemp//10)*10
-                    yt=(ytemp//10)*10
 
             if (event.type == pygame.KEYDOWN): #Выбираем из взаимодействий игрока только нажатия клавиш.
                 if event.key==pygame.K_ESCAPE: #Завершение игры через Escape.
@@ -91,46 +91,120 @@ def game(): #Функция игры
                     dot_portal=False
                     portal_xy = [dis_x/2,dis_y/2]
                 if (defeat==False): #Проверка на то, что игра не проиграна
-                    if (snake_head[0]%10 != 0): #Если голова змея находится не в системе координат игры из-за движения наискосок, мы её возвращаем
-                            x1+=snake_block/2
-                            y1+=snake_block/2
-                            stop=True
                     if event.key == pygame.K_a and previous_key != 'd' and move_accept == False: #влево
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
                         move_accept = True
                         previous_key = 'a'
                         stop=False
                         x1_change = -snake_block
                         y1_change = 0
                     elif event.key == pygame.K_d and previous_key != 'a' and move_accept == False: #вправо
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
                         move_accept = True
                         previous_key = 'd'
                         stop=False
                         x1_change = snake_block
                         y1_change = 0
                     elif event.key == pygame.K_w and previous_key != 's' and move_accept == False: #вверх
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
                         move_accept = True
                         previous_key = 'w'
                         stop=False
                         y1_change = -snake_block
                         x1_change = 0
                     elif event.key == pygame.K_s and previous_key != 'w' and move_accept == False: #вниз
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
                         move_accept = True
                         previous_key = 's'
                         stop=False
                         y1_change = snake_block
                         x1_change = 0
+
+                    elif event.key == pygame.K_e and previous_key != 'z' and move_accept == False: #вверх-направо
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
+                        move_accept = True
+                        previous_key = 'e'
+                        stop=False
+                        y1_change = -snake_block/2
+                        x1_change = snake_block/2
+                    elif event.key == pygame.K_q and previous_key != 'c' and move_accept == False: #вверх-налево
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
+                        move_accept = True
+                        previous_key = 'q'
+                        stop=False
+                        y1_change = -snake_block/2
+                        x1_change = -snake_block/2
+                    elif event.key == pygame.K_c and previous_key != 'q' and move_accept == False: #вниз-направо
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
+                        move_accept = True
+                        previous_key = 'c'
+                        stop=False
+                        y1_change = snake_block/2
+                        x1_change = snake_block/2
+                    elif event.key == pygame.K_z and previous_key != 'e' and move_accept == False: #вниз-налево
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
+                        move_accept = True
+                        previous_key = 'z'
+                        stop=False
+                        y1_change = snake_block/2
+                        x1_change = -snake_block/2
+
                     elif event.key == pygame.K_x: #стоп
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
                         previous_key = ''
                         stop=True
                         y1_change = 0
                         x1_change = 0
                     elif event.key == pygame.K_f and dot_portal == False: #Телепорт в начало
+                        if (snake_head[0]%10 != 0):
+                            x1+=x1_change
+                            y1+=y1_change
+                            snake_head = [x1,y1] #голова змея окоянного
+                            snake_list.append(snake_head)
                         portal_time = 0
                         portal_xy = [x1,y1]
-                        dot_portal = True
                         stop=False
+                        xt=(xtemp//10)*10
+                        yt=(ytemp//10)*10
                         x1=xt
                         y1=yt
+                        dot_portal = True
         if (x1 >= dis_x-snake_block) or (x1 < 0+snake_block) or (y1 >= dis_y-snake_block) or (y1 < 0+snake_block + 50):
             defeat=True  #Поражение, если координаты головы змея окоянного выходят за границы поля
         if (defeat==False): 
